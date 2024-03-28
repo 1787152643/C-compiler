@@ -58,7 +58,9 @@ extern int yydebug;
     ID = 259,                      /* ID  */
     IF = 260,                      /* IF  */
     ELSE = 261,                    /* ELSE  */
-    WHILE = 262                    /* WHILE  */
+    WHILE = 262,                   /* WHILE  */
+    EQ = 263,                      /* EQ  */
+    NEG = 264                      /* NEG  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -67,12 +69,17 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 13 "parser.y"
+#line 20 "parser.y"
 
   int ival;
   string sval;
+  A_stmt stmt;
+  A_stmts stmts;
+  A_exp exp;
+  A_dec dec;
+  A_ty ty;
 
-#line 76 "parser.tab.h"
+#line 83 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

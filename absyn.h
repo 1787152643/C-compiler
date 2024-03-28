@@ -7,9 +7,13 @@
 
 /* Type Definitions */
 
+#include"symbol.h"
+
 typedef int A_pos;
 
 typedef struct A_stmt_ *A_stmt;
+typedef struct A_stmts_ *A_stmts;
+
 typedef struct A_var_ *A_var;
 typedef struct A_exp_ *A_exp;
 typedef struct A_dec_ *A_dec;
@@ -28,6 +32,18 @@ typedef struct A_efieldList_ *A_efieldList;
 
 typedef enum {A_plusOp, A_minusOp, A_timesOp, A_divideOp,
 	     A_eqOp, A_neqOp, A_ltOp, A_leOp, A_gtOp, A_geOp} A_oper;
+
+struct A_stmt_
+{
+	enum{A_decStmt, A_expStmt, A_ifStmt, A_whileStmt} kind;
+	A_pos pos;
+	union{
+		A_dec dec;
+		A_exp exp;
+		struct {A_exp test; A_stmts then; A_stmts elsee;} iff;
+
+	} u;
+};
 
 struct A_var_
        {enum {A_simpleVar, A_fieldVar, A_subscriptVar} kind;
@@ -83,6 +99,8 @@ struct A_ty_ {enum {A_nameTy, A_recordTy, A_arrayTy} kind;
 
 /* Linked lists and nodes of lists */
 
+struct A_stmts_ {A_stmt head; A_stmts tail;};
+
 struct A_field_ {S_symbol name, typ; A_pos pos; bool escape;};
 struct A_fieldList_ {A_field head; A_fieldList tail;};
 struct A_expList_ {A_exp head; A_expList tail;};
@@ -99,6 +117,13 @@ struct A_efieldList_ {A_efield head; A_efieldList tail;};
 
 
 /* Function Prototypes */
+
+A_stmt A_DecStmt(A_pos pos, A_dec dec);
+A_stmt A_ExpStmt(A_pos pos, A_exp exp);
+A_stmt A_IfStmt(A_pos pos, A_exp test, A_stmts true_stmt, A_stmts false_stmt);
+A_stmts A_Stmts(A_stmt head, A_stmts tail);
+A_stmts A_reverseStmts(A_stmts stmts);
+
 A_var A_SimpleVar(A_pos pos, S_symbol sym);
 A_var A_FieldVar(A_pos pos, A_var var, S_symbol sym);
 A_var A_SubscriptVar(A_pos pos, A_var var, A_exp exp);

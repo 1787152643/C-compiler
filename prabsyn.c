@@ -151,7 +151,12 @@ static void pr_dec(FILE *out, A_dec v, int d) {
    if (v->u.var.typ) {
      indent(out, d+1); fprintf(out, "%s,\n", S_name(v->u.var.typ)); 
    }
-   pr_exp(out, v->u.var.init, d+1); fprintf(out, ",\n");
+   if(v->u.var.init)
+    pr_exp(out, v->u.var.init, d+1);
+   else{
+    indent(out, d+1); fprintf(out, "No init.");
+   }
+   fprintf(out, ",\n");
    indent(out, d+1); fprintf(out, "%s", v->u.var.escape ? "TRUE)" : "FALSE)");
    break;
  case A_typeDec:
@@ -277,6 +282,45 @@ static void pr_efieldList(FILE *out, A_efieldList v, int d) {
  else fprintf(out, "efieldList()");
 }
 
+static void pr_stmt(FILE *out, A_stmt v, int d) {
+ indent(out, d);
+ switch(v->kind){
+  case A_decStmt:
+   fprintf(out, "decStmt(\n");
+   pr_dec(out, v->u.dec, d+1);
+   fprintf(out, ")");
+   break;
+  case A_expStmt:
+   fprintf(out, "expStmt(\n");
+   pr_exp(out, v->u.exp, d+1);
+   fprintf(out, ")");
+   break;
+  case A_ifStmt:
+   fprintf(out, "ifStmt(\n");
+   pr_exp(out, v->u.iff.test, d+1); fprintf(out, ",\n");
+   pr_stmts(out, v->u.iff.then, d+1);
+   if (v->u.iff.elsee) { /* else is optional */
+      fprintf(out, ",\n");
+      pr_stmts(out, v->u.iff.elsee, d+1);
+   }
+   fprintf(out, ")");
+   break;
+  default:
+   fprintf(out, "stmt type error.");
+   exit(1);
+ }
+}
+
+
+void pr_stmts(FILE *out, A_stmts v, int d) {
+ indent(out, d);
+ if (v) {
+   fprintf(out, "stmts(\n"); 
+   pr_stmt(out, v->head, d+1); fprintf(out, ",\n");
+   pr_stmts(out, v->tail, d+1); fprintf(out, ")");
+ }
+ //else fprintf(out, "stmts()");
+}
 
 
 

@@ -1,11 +1,15 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include"util.h"
+#include"absyn.h"
+#include"prabsyn.h"
 #include"parser.tab.h"
 
 extern int yyparse(void);
 
 extern FILE *yyin;
+
+extern A_stmts root_stmts;
 
 void parse(const char* fname)
 {
@@ -20,5 +24,6 @@ int main(int argc, char** argv)
 {
 	if (argc!=2) {fprintf(stderr,"usage: a.out filename\n"); exit(1);}
  	parse(argv[1]);
+	pr_stmts(stdout, root_stmts, 0);
  	return 0;
 }

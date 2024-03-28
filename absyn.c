@@ -7,6 +7,54 @@
 #include "symbol.h" /* symbol table data structures */
 #include "absyn.h"  /* abstract syntax data structures */
 
+A_stmt A_DecStmt(A_pos pos, A_dec dec){
+	A_stmt p = checked_malloc(sizeof(*p));
+	p->kind = A_decStmt;
+	p->pos=pos;
+	p->u.dec=dec;
+	return p;
+}
+
+A_stmt A_ExpStmt(A_pos pos, A_exp exp){
+	A_stmt p = checked_malloc(sizeof(*p));
+	p->kind = A_expStmt;
+	p->pos = pos;
+	p->u.exp = exp;
+	return p;
+}
+
+A_stmt A_IfStmt(A_pos pos, A_exp test, A_stmts true_stmt, A_stmts false_stmt){
+	A_stmt p = checked_malloc(sizeof(*p));
+	p->kind = A_ifStmt;
+	p->pos = pos;
+	p->u.iff.test = test;
+	p->u.iff.then = true_stmt;
+	p->u.iff.elsee = false_stmt;
+	return p;
+}
+
+A_stmts A_Stmts(A_stmt head, A_stmts tail){
+	A_stmts p = checked_malloc(sizeof(*p));
+	p->head = head;
+	p->tail = tail;
+	return p;
+}
+
+A_stmts A_reverseStmts(A_stmts head){
+	if(head==0){
+		return head;
+	}
+		A_stmts cur = head->tail;
+		A_stmts pre = head;
+	while(cur){
+		pre->tail = cur->tail;
+		cur->tail = head;
+		head = cur;
+		cur = pre->tail;
+	}
+	return head;
+}
+
 A_var A_SimpleVar(A_pos pos, S_symbol sym)
 {A_var p = checked_malloc(sizeof(*p));
  p->kind=A_simpleVar;

@@ -1,5 +1,16 @@
-a.out: util.o parser.tab.o lex.yy.o main.o
-	cc -g util.o parser.tab.o lex.yy.o main.o
+a.out: util.o table.o symbol.o absyn.o prabsyn.o parser.tab.o main.o lex.yy.o
+	cc -g util.o table.o symbol.o absyn.o prabsyn.o parser.tab.o main.o lex.yy.o
+
+prabsyn.o:util.h symbol.h absyn.h prabsyn.h prabsyn.c
+
+absyn.o: util.h symbol.h symbol.h absyn.c
+	cc -g -c absyn.c
+
+symbol.o: util.h symbol.c symbol.h table.h
+	cc -g -c symbol.c
+
+table.o: table.c table.h
+	cc -g -c table.c
 
 main.o: main.c util.c
 	cc -g -c main.c
@@ -23,4 +34,4 @@ lex.yy.c: ler.lex
 	lex ler.lex
 
 clean:
-	rm -f a.out main.o util.o parser.tab.o parser.tab.c parser.tab.h lex.yy.o lex.yy.c
+	rm -f a.out main.o util.o parser.tab.o parser.tab.c parser.tab.h parser.output lex.yy.o lex.yy.c absyn.o symbol.o table.o prabsyn.o
