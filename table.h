@@ -21,7 +21,7 @@ void *TAB_look(TAB_table t, void *key);
 
 /* Pop the most recent binding and return its key.
  * This may expose another binding for the same key, if there was one. */
-void *TAB_pop(TAB_table t);
+void *TAB_pop(TAB_table t, bool withFree);
 
 
 /* Call "show" on every "key"->"value" pair in the table,

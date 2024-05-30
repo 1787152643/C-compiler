@@ -307,7 +307,6 @@ static void pr_stmt(FILE *out, A_stmt v, int d) {
    break;
   default:
    fprintf(out, "stmt type error.");
-   exit(1);
  }
 }
 

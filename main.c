@@ -3,6 +3,7 @@
 #include"util.h"
 #include"absyn.h"
 #include"prabsyn.h"
+#include"translate.h"
 #include"parser.tab.h"
 
 extern int yyparse(void);
@@ -25,5 +26,6 @@ int main(int argc, char** argv)
 	if (argc!=2) {fprintf(stderr,"usage: a.out filename\n"); exit(1);}
  	parse(argv[1]);
 	pr_stmts(stdout, root_stmts, 0);
+	translate(stdout, root_stmts);
  	return 0;
 }

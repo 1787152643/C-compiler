@@ -1,0 +1,1 @@
+int translate(FILE *out, A_stmts stmts);

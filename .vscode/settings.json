@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "symbol.h": "c",
-        "parser.tab.h": "c"
+        "parser.tab.h": "c",
+        "util.h": "c"
     }
 }
