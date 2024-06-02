@@ -2,11 +2,14 @@
 #include<math.h>
 #include"util.h"
 #include"absyn.h"
+#include"quadruple.h"
 #include"parser.tab.h"
 
-#define LEX_DEBUG
+//#define LEX_DEBUG
 
 extern A_pos pos;
+
+extern int line;
 
 %}
 
@@ -30,6 +33,29 @@ else      {
 
 while     {pos+=yyleng;return WHILE;}
 
+"&&"      {pos+=yyleng;return AND;}
+
+"||"      {pos+=yyleng;return OR;}
+
+"=="        {
+          #ifdef LEX_DEBUG
+          printf("EQ\n");
+          #endif
+          pos+=yyleng;
+          return EQ;}
+"!="        {pos+=yyleng; return NE;}
+
+"<"         {pos+=yyleng;
+          printf("LT\n");
+          return LT;}
+
+"<="        {pos+=yyleng; return LE;}
+
+">"         {pos+=yyleng; return GT;}
+
+">="        {pos+=yyleng; return GE;}
+
+
 {DIGIT}+  {
           #ifdef LEX_DEBUG
           printf("An integer:%s (%d)\n", yytext, atoi(yytext));
@@ -48,14 +74,7 @@ while     {pos+=yyleng;return WHILE;}
           return ID;
           }
 
-==        {
-          #ifdef LEX_DEBUG
-          printf("EQ\n");
-          #endif
-          pos+=yyleng;
-          return EQ;}
-
-[+\-*/=]  {
+[+\-*/=!]  {
           #ifdef LEX_DEBUG
           printf("detect operator:%s\n", yytext); 
           #endif
@@ -71,7 +90,9 @@ while     {pos+=yyleng;return WHILE;}
           return *yytext;
           }
 
-[ \n\t]+  {pos+=yyleng;continue;}
+[ ]+      {pos+=yyleng; continue;}
+
+[\n\t]+  {pos+=yyleng; line++; continue;}
 
 .         {pos+=yyleng;printf("Unrecognized: %s\n", yytext);}
 

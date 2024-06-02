@@ -4,6 +4,8 @@
 #include"absyn.h"
 #include"prabsyn.h"
 #include"translate.h"
+#include"symbol.h"
+#include"quadruple.h"
 #include"parser.tab.h"
 
 extern int yyparse(void);
@@ -11,6 +13,14 @@ extern int yyparse(void);
 extern FILE *yyin;
 
 extern A_stmts root_stmts;
+
+extern S_table var_table;
+
+void init()
+{
+    var_table = S_empty();
+	quadruple_init();
+}
 
 void parse(const char* fname)
 {
@@ -24,8 +34,10 @@ void parse(const char* fname)
 int main(int argc, char** argv)
 {
 	if (argc!=2) {fprintf(stderr,"usage: a.out filename\n"); exit(1);}
+	init();
  	parse(argv[1]);
-	pr_stmts(stdout, root_stmts, 0);
-	translate(stdout, root_stmts);
+	printQuads();
+	//pr_stmts(stdout, root_stmts, 0);
+	//translate(stdout, root_stmts);
  	return 0;
 }

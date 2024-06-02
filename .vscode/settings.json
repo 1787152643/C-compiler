@@ -2,6 +2,15 @@
     "files.associations": {
         "symbol.h": "c",
         "parser.tab.h": "c",
-        "util.h": "c"
+        "util.h": "c",
+        "quadruple.h": "c",
+        "random": "c",
+        "system_error": "c",
+        "stdio.h": "c",
+        "string.h": "c",
+        "typeinfo": "c",
+        "stdlib.h": "c",
+        "sstream": "c",
+        "translate.h": "c"
     }
 }

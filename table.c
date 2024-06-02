@@ -60,7 +60,7 @@ void *TAB_look(TAB_table t, void *key)
  return NULL;
 }
 
-void *TAB_pop(TAB_table t, bool withFree) {
+void *TAB_pop(TAB_table t/* , bool withFree */) {
   void *k; binder b; int index;
   assert (t);
   k = t->top;
@@ -70,7 +70,6 @@ void *TAB_pop(TAB_table t, bool withFree) {
   assert(b);
   t->table[index] = b->next;
   t->top=b->prevtop;
-  free(b->value);
   return b->key;
 }
 

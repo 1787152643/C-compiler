@@ -62,9 +62,9 @@ void S_beginScope(S_table t)
 { S_enter(t,&marksym,NULL);
 }
 
-void S_endScope(S_table t, bool withFree)
+void S_endScope(S_table t/*, bool withFree*/)
 {S_symbol s;
-  do s=TAB_pop(t, withFree);
+  do s=TAB_pop(t/*, withFree*/);
   while (s != &marksym);
 }
 

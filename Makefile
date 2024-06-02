@@ -1,6 +1,9 @@
-a.out: util.o table.o symbol.o absyn.o prabsyn.o types.o translate.o parser.tab.o main.o lex.yy.o
-	cc -g util.o table.o symbol.o absyn.o prabsyn.o types.o translate.o parser.tab.o main.o lex.yy.o
+a.out: util.o table.o symbol.o absyn.o prabsyn.o types.o translate.o quadruple.o parser.tab.o main.o lex.yy.o
+	cc -g util.o table.o symbol.o absyn.o prabsyn.o types.o translate.o quadruple.o parser.tab.o main.o lex.yy.o
 	
+quadruple.o: util.h quadruple.h quadruple.c
+	cc -g -c quadruple.c
+
 translate.o:util.h absyn.h symbol.h prabsyn.h types.h translate.h translate.c
 	cc -g -c translate.c
 
@@ -41,4 +44,4 @@ lex.yy.c: ler.lex
 	lex ler.lex
 
 clean:
-	rm -f a.out main.o util.o parser.tab.o parser.tab.c parser.tab.h parser.output lex.yy.o lex.yy.c absyn.o symbol.o table.o prabsyn.o types.o translate.o
+	rm -f a.out main.o util.o parser.tab.o parser.tab.c parser.tab.h parser.output lex.yy.o lex.yy.c absyn.o symbol.o table.o prabsyn.o types.o translate.o quadruple.o
