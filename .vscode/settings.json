@@ -11,6 +11,7 @@
         "typeinfo": "c",
         "stdlib.h": "c",
         "sstream": "c",
-        "translate.h": "c"
+        "translate.h": "c",
+        "types.h": "c"
     }
 }

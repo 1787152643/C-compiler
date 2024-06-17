@@ -1,10 +1,11 @@
-int main(){
-  int a = 1;
+void main(){
+  int* a;
   int b;
   b = 1+2+3+a;
-  while(b < 10){
-    b = b-1;
-    int c;
+  if(b < 10){
+    int c = 0;
+  }else{
+    int d = 0;
   }
-  c = 5;
+  b = *a;
 }

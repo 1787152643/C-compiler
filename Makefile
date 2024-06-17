@@ -30,9 +30,9 @@ util.o: util.c util.h
 
 parser.tab.o: parser.tab.c util.h
 	cc -g -c parser.tab.c
-	
+
 parser.tab.c: parser.y
-	bison -dv parser.y
+	bison -dv -Wcounterexamples parser.y
 
 parser.tab.h: parser.tab.c
 	echo "parser.tab.h was created at the same time as parser.tab.c"

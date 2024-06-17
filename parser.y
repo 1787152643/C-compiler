@@ -30,6 +30,7 @@ extern int nextquad;
   string sval;
   Q_stmt stmt;
   //Q_stmts stmts;
+  Q_declarator dctor;
   Q_exp exp;
   Q_condition con;
   Mtype m;
@@ -42,6 +43,7 @@ extern int nextquad;
 %token IF
 %token ELSE
 %token WHILE
+%token INT
 %token AND OR
 %token EQ NE LT LE GT GE
 
@@ -49,6 +51,7 @@ extern int nextquad;
 %type <stmt> stmt
 %type <stmt> stmts
 %type <dec> var_dec
+%type <dctor> declarator
 %type <con> condition
 %type <m> M
 %type <stmt> N
@@ -63,6 +66,7 @@ extern int nextquad;
 %left '-' '+'
 %left '*' '/'
 %left NEG
+%left STAR
 
 %%
 
@@ -87,7 +91,38 @@ var_dec_seq1: var_dec
              | var_dec_seq1',' var_dec
 
 /* simple valua declaration */
-var_dec: ID ID
+var_dec: 
+         INT declarator
+       {
+         //$$ = A_VarDec(pos, S_Symbol($2), S_Symbol($1), 0);
+         S_symbol sym = S_Symbol($2->name);
+         Q_addr addr = find_free();
+         Q_operand op = Q_VarOperand($2->name, addr);
+         op->type = $2->type;
+         S_enter(var_table, sym, op);
+       }
+       | INT ID '=' exp
+       {
+         //$$ = A_VarDec(pos, S_Symbol($2), S_Symbol($1), $4);
+         S_symbol sym = S_Symbol($2);
+         Q_addr addr = find_free();
+         Q_operand op = Q_VarOperand($2, addr);
+         S_enter(var_table, sym, op);
+         gen(Q_assignOp, $4->result, NULL, op);
+       }
+
+declarator:
+      ID
+      {
+         $$ = Q_Declarator($1, Q_Int());
+      }
+      | '*'declarator
+      {
+         Q_type inner = $2->type;
+         $$ = Q_Declarator($2->name, Q_Pointer(inner));
+      }
+
+/*ID ID
        {
          //$$ = A_VarDec(pos, S_Symbol($2), S_Symbol($1), 0);
          if(strcmp($1, "int")==0){
@@ -112,7 +147,7 @@ var_dec: ID ID
          }else{
             yyerror("only support int now.");
          }
-       }
+       }*/
 /*
 exp_list: exp';'             {printf("Reduce exp_list by rule 1.\n");}
         | exp_list exp';'    {printf("Reduce exp_list by rule 2.\n");}
@@ -174,7 +209,7 @@ stmt: /* empty stmt */';'
     }
     /*| error
    {
-      fprintf(stderr, "Syntax error when parsing stmt.\n");
+      fprintf(stderr, "Syntax error when parsing stmt in line %d.\n", line);
       yyerrok;
    }*/
 //    | '{'stmts'}'
@@ -343,6 +378,19 @@ exp:
       gen(Q_eqOp, $1->result, $3->result, dest);
       $$ = Q_Exp(dest);
    }*/
+   | '*'exp %prec STAR
+   {
+      Q_type type;
+      if($2->result->type->kind==Q_pointer){
+         type = $2->result->type->u.points;
+      }else{
+         yyerror("warning");
+         type = Q_Int();
+      }
+      Q_operand dest = Q_RefOperand($2->result, type);
+      gen(Q_starOp, $2->result, NULL, dest);
+      $$ = Q_Exp(dest);
+   }
    | ID'('exp_seq')'  /* function call */
    {
       printf("No implementation of function call.\n");

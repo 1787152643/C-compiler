@@ -33,6 +33,8 @@ else      {
 
 while     {pos+=yyleng;return WHILE;}
 
+int       {pos+=yyleng;return INT;}
+
 "&&"      {pos+=yyleng;return AND;}
 
 "||"      {pos+=yyleng;return OR;}

@@ -10,9 +10,37 @@ quadrupleList begin;
 
 int nextquad = 1;
 
+static struct Q_type_ qtyint = {Q_int};
+
+Q_type Q_Int(void){return &qtyint;}
+
+Q_type Q_Pointer(Q_type inner){
+    Q_type p = checked_malloc(sizeof(*p));
+    p->kind = Q_pointer;
+    p->u.points = inner;
+    return p;
+}
+
+int Q_typeEqual(Q_type t1, Q_type t2){
+    if(t1==t2)
+        return 1;
+    if(t1->kind==Q_pointer && t2->kind==Q_pointer)
+        return Q_typeEqual(t1->u.points, t2->u.points);
+    else
+        return 0;
+}
+
+Q_declarator Q_Declarator(char* name, Q_type type){
+    Q_declarator p = checked_malloc(sizeof(*p));
+    p->name = name;
+    p->type = type;
+    return p;
+}
+
 Q_operand Q_VarOperand(char* name, Q_addr addr){
     Q_operand op = checked_malloc(sizeof(*op));
     op->kind = Q_varOp;
+    op->type = Q_Int();
     op->u.var.name = name;
     op->u.var.addr = addr;
     return op;
@@ -32,6 +60,7 @@ Q_operand Q_TempOperand(){
     static int next_id = 1;
     Q_operand op = checked_malloc(sizeof(*op));
     op->kind = Q_tempOp;
+    op->type = Q_Int();
     op->u.temp.id = next_id++;
     op->u.temp.addr = find_free();
     return op;
@@ -40,7 +69,18 @@ Q_operand Q_TempOperand(){
 Q_operand Q_ImmOperand(int value){
     Q_operand op = checked_malloc(sizeof(*op));
     op->kind = Q_immOp;
+    op->type = Q_Int();
     op->u.imm.value = value;
+    return op;
+}
+
+Q_operand Q_RefOperand(Q_operand mem_addr, Q_type type){
+    Q_operand op = checked_malloc(sizeof(*op));
+    op->kind = Q_refOp;
+    op->type = type;
+    //op->u.ref.value = 0;
+    op->u.ref.mem_addr = mem_addr;
+    op->u.ref.addr = find_free();
     return op;
 }
 
@@ -128,6 +168,15 @@ static void operand2string(Q_operand op, char* s)
         case Q_immOp: 
             sprintf(s, "%d", op->u.imm.value);
             break;
+        case Q_refOp:
+        // warning
+            if(op->u.ref.mem_addr->kind==Q_varOp)
+                sprintf(s, "*%s", op->u.ref.mem_addr->u.var.name);
+            else{
+                operand2string(op->u.ref.mem_addr, s+1);
+                s[0]='*';
+            }
+            break;
     }
 }
 
@@ -135,7 +184,7 @@ void printQuads()
 {	
     quadrupleList p = begin->head;
     char *operators[] = {"+", "-", "*", "/", "==", "!=", "<", "<=", ">", ">=", ":=", 
-    "b", "beq", "bne", "blt", "ble", "bgt", "bge"};
+    "b", "beq", "bne", "blt", "ble", "bgt", "bge", "*"};
     while(p){
         char op1_s[10] ;operand2string(p->tail->op1, op1_s);
         char op2_s[10] ;operand2string(p->tail->op2, op2_s);
